@@ -24,3 +24,6 @@ Implement Tetris with Java
 
 - javax.swing.Timer<br>
 **·** https://sjh836.tistory.com/36<br>
+
+- 테트리스 기본 키<br>
+**·** https://arca.live/b/tetris/58107918<br>
