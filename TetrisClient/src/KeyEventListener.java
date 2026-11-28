@@ -24,12 +24,14 @@ public class KeyEventListener implements KeyListener {
 		this.GamePanel = GamePanel;
 	}
 	
+	// 유니코드 문자 키가 입력될 때
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	// 키를 누를 때
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -78,6 +80,7 @@ public class KeyEventListener implements KeyListener {
 		GamePanel.repaint();
 	}
 
+	// 키를 뗄 때
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub

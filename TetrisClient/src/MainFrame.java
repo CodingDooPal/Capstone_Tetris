@@ -430,11 +430,9 @@ class MenuPanel extends JPanel implements ActionListener {
 
 class GamePanel extends JPanel implements ActionListener {
 	private final MainFrame mainFrame;
-	
 	private final GameDisplay gameDisplay;
 	
-	private final JButton backButton;
-	
+	private final JButton backButton;	
 	private final JLabel nextBlockLabel;
 	private JLabel scoreLabel;
 	
@@ -460,7 +458,7 @@ class GamePanel extends JPanel implements ActionListener {
 		gameDisplay = new GameDisplay(this.selectionBlockType(), this.selectionBlockType());
 		gameDisplay.setLayout(null);
 	
-		gameDisplay.setBounds(50, 110, 510, 600);
+		gameDisplay.setBounds(50, 110, 510, 660);
 		gameDisplay.setBackground(Color.BLACK);
 		
 		backButton = new JButton("뒤로가기");
@@ -473,7 +471,7 @@ class GamePanel extends JPanel implements ActionListener {
 		
 		scoreLabel = new JLabel("현재 점수: " + String.valueOf(score));
 		scoreLabel.setForeground(Color.WHITE);
-		scoreLabel.setBounds(390, 300, 100, 30);
+		scoreLabel.setBounds(360, 240, 100, 30);
 		
 		
 		// 키 입력
@@ -495,38 +493,41 @@ class GamePanel extends JPanel implements ActionListener {
             	}
             	// 블럭이 내려갈 수 없게 되면 모양 변경
             	else {
-            		// 추가적으로 윗 공간이 없다면 게임 오버(lock 메서드로 현재 위치에 블럭을 놓을 수 있는지 확인)
+            		// 블럭을 놓을 공간이 없다면 게임 오버(lock 메서드로 현재 위치에 블럭을 놓을 수 있는지 확인)
             		if(!gameDisplay.fallingBlock.lock(GameBoard.getBoard())) {
             			gameTimer.stop();
             			System.out.println("최종 점수: " + score);
             			
-            			// 점수 보내기
+            			// 최종 점수를 서버로 보낸다.
             			TCPTx tcp = new TCPTx();
             			String[] sendData = RequestData.createScoreRequest(String.valueOf(score), String.valueOf(mainFrame.getUserNumber()));
             			tcp.request(sendData);
             		
             			score = 0;
-            			gameDisplay.fallingBlock.setBlockY(0);
-                    	gameDisplay.fallingBlock.setBlockX(120);
                     	GameBoard.initBoard();
+                    	initBlockState();
+                    	mainFrame.changeScreen(Screen.MENU);
                     	return;
             		}
             		
             		// 모양 변경
                     gameDisplay.setFallingBlockType(gameDisplay.nextBlock.getBlockType());
                     gameDisplay.setNextBlockType(selectionBlockType());
-                    gameDisplay.fallingBlock.setBlockY(0);
+                    // FallingBlock과 NextBlock의 BlockType이 중복되지 않도록 한다.
+                    while(gameDisplay.fallingBlock.getBlockType().name().equals(gameDisplay.nextBlock.getBlockType().name())) {
+                    	gameDisplay.setNextBlockType(selectionBlockType());
+                    }
+                    gameDisplay.fallingBlock.setBlockY(30);
                     gameDisplay.fallingBlock.setBlockX(120);
             	}
             	
-            	// 완성된 행이 있는지 체크
+            	// 완성된 라인이 있는지 체크
             	GameBoard.lineCheck(GamePanel.this);
                 
-            	// 블럭 좌표 최신화
-                gameDisplay.updateBlockXY(gameDisplay.fallingBlock.getBlockX(), 
-                		gameDisplay.fallingBlock.getBlockY());
+            	// 블럭 XY좌표 갱신
+                gameDisplay.updateBlockXY(gameDisplay.fallingBlock.getBlockX(), gameDisplay.fallingBlock.getBlockY());
                 
-                // 점수 최신화
+                // 현재 점수 갱신
                 scoreLabel.setText("현재 점수: " + String.valueOf(score));
             }
         });
@@ -546,6 +547,18 @@ class GamePanel extends JPanel implements ActionListener {
 			this.gameTimer.stop();
 			new ConfirmationWindow(mainFrame, this);
 		}
+	}
+	
+	// 게임 오버 or 게임 종료 시 블럭 상태 초기화
+	public void initBlockState() {
+		gameDisplay.setFallingBlockType(selectionBlockType());
+        gameDisplay.setNextBlockType(selectionBlockType());
+        // FallingBlock과 NextBlock의 BlockType이 중복되지 않도록 한다.
+        while(gameDisplay.fallingBlock.getBlockType().name().equals(gameDisplay.nextBlock.getBlockType().name())) {
+        	gameDisplay.setNextBlockType(selectionBlockType());
+        }
+		gameDisplay.fallingBlock.setBlockY(30);
+        gameDisplay.fallingBlock.setBlockX(120);
 	}
 	
 	private BlockType selectionBlockType() {
@@ -631,6 +644,7 @@ class ConfirmationWindow extends JFrame implements ActionListener {
 			this.dispose(); // 해당 창만 종료
 			// 인게임 내용 초기화 코드 추가 해야 됨
 			GameBoard.initBoard();
+			gamePanel.initBlockState();
 			
 			// 메뉴 화면으로 나가기
 			mainFrame.changeScreen(Screen.MENU);

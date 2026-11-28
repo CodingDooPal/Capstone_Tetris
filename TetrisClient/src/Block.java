@@ -78,6 +78,7 @@ enum BlockType {
 		this.shape = shape;
 	}
 	
+	// 모양 반환
 	public int[][] getShape() {
 		return this.shape;
 	}
@@ -86,19 +87,20 @@ enum BlockType {
 public class Block {
 	private BlockType type;
 	private BlockMap data;
-	private final int CELL = 30;
-	int[][] shape;
+	private final int CELL = 30; // 한 블럭은 30px
+	int[][] shape; // 블럭의 현재 모양(회전 상태 반영)
 	
 	// 블럭의 XY 좌표
-	private int blockX = 30;
+	private int blockX = 120;
 	private int blockY = 30;
 	
-	Block(BlockType type) {
+	public Block(BlockType type) {
 		this.type = type;
 		this.shape = type.getShape();
 		this.data = new BlockMap();
 	}
-	
+
+	// BlockType 설정 및 반환
 	public void setBlockType(BlockType type) {
 		this.type = type;
 		this.shape = type.getShape();
@@ -108,6 +110,7 @@ public class Block {
 		return this.type;
 	}
 	
+	// BlockType에 따라 사용해야 할 Image 객체(BlockImage, BlockLine) 반환
 	public Image getBlockImage() {
 		return this.data.getBlockImage(this);
 	}
@@ -116,6 +119,7 @@ public class Block {
 		return this.data.getBlockLine(this);
 	}
 	
+	// BlockShape 설정 및 반환
 	private void setBlockShape(int[][] shape) {
 		this.shape = shape;
 	}
@@ -124,6 +128,7 @@ public class Block {
 		return shape;
 	}
 	
+	// 블럭의 XY 좌표 설정 및 반환
 	public void setBlockX(int num) {
 		this.blockX = num;
 	}
@@ -140,24 +145,28 @@ public class Block {
 		return this.blockY;
 	}
 	
+	// 왼쪽으로 이동
 	public void moveLeft() {
 		if(canMove(GameBoard.getBoard(), this.shape, -1, 0)) {
 			this.setBlockX(this.blockX - CELL);
 		}
 	}
 	
+	// 오른쪽으로 이동
 	public void moveRight() {
 		if(canMove(GameBoard.getBoard(), this.shape, 1, 0)) {
 			this.setBlockX(this.blockX + CELL);
 		}
 	}
 
+	// 한 칸 아래로 이동
 	public void softDrop() {
 		if(canMove(GameBoard.getBoard(), this.shape, 0, 1)) {
 			this.setBlockY(this.blockY + CELL);
 		}
 	}
 	
+	// 맨 아래로 이동
 	public void hardDrop() {
 		while(canMove(GameBoard.getBoard(), this.shape, 0, 1)) {
 			this.setBlockY(this.blockY + CELL);
@@ -176,9 +185,11 @@ public class Block {
 			result[i][1] = this.shape[i][0];
 		}
 		
+		/*
 		if (canMove(GameBoard.getBoard(), result, 0, 0)) {	
 			this.setBlockShape(result);
 		}
+		*/
 	}
 	
 	// 반시계 방향으로 90도 회전
@@ -193,15 +204,21 @@ public class Block {
 			result[i][1] = -this.shape[i][0];
 		}
 		
+		/*
 		if (canMove(GameBoard.getBoard(), result, 0, 0)) {	
 			this.setBlockShape(result);
 		}
+		*/
+		
+		rotateWithKick(result);
 	}
 	
 	/*
-	 * 상대 죄표에 따른 충돌 감지 로직
-	 * 블럭의 모든 칸을 비교하여 충돌되는 부분이 있는지 계산한다.  
-	 * 문제가 없다면 true, 충돌이 발생하면 false를 반환
+	 * canMove(충돌 감지 함수)
+	 * 
+	 * 블럭이 이동 또는 회전 시 충돌되는 부분이 있는지 검사한다.
+	 * 각 블럭을 구성하는 모든 칸을 대상으로 검사한다.  
+	 * 문제가 없다면 true, 충돌이 발생하면 false를 반환한다.
 	 * 
 	 */
 	
@@ -216,12 +233,12 @@ public class Block {
 			}
 			
 			// 블럭이 바닥에 닿았는지 확인
-			if(y > 19) {
+			if(y > 21) {
 				return false;
 			}
 			
 			// 블럭이 다른 블럭과 겹치는지 확인
-			if(y >= 0 && gameBoard[y][x] != 0) {
+			if(y >= 2  && gameBoard[y][x] != 0) {
 				return false;
 			}
 		}
@@ -230,22 +247,46 @@ public class Block {
 	}
 	
 	// 블럭을 해당 위치에 고정한다.
-	// 만약 고정 위치가 유효하지 않다면 false 반환
+	// 만약 고정 위치가 유효하지 않다면 false 반환한다.
 	public boolean lock(int[][] gameBoard) {
 		for(int[] cell : this.shape) {
 			int x = this.blockX / 30 + cell[0];
 			int y = this.blockY / 30 + cell[1];
 			
-			// 블럭이 고정 불가능한 위치에 있으면 게임 오버
-			if(x < 0 || x > 9 || y < 0 || y > 19) {
+			// 블럭이 고정 불가능한 위치에 있으면 게임 오버로 처리한다.
+			if(x < 0 || x > 9 || y < 2 || y > 21) {
 				return false;
 			}
+		}
 		
-			gameBoard[y][x] = this.type.ordinal() + 1; // 모양에 따른 색상 번호로 저장 -> 나중에 색상 번호로 색을 그림.
+		for(int[] cell : this.shape) {
+			int x = this.blockX / 30 + cell[0];
+			int y = this.blockY / 30 + cell[1];
+			
+			// BlockShape에 따른 enum.ordinal(int 타입)로 저장한다.
+			// 나중에 색상을 원활하게 고르기 위함.
+			gameBoard[y][x] = this.type.ordinal() + 1;
 		}
 		
 		return true;
 	}
+	
+	
+	// KICKS
+	private static final int[][] KICKS = {
+		    {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {-2, 0}, {2, 0}
+		};
+
+		private void rotateWithKick(int[][] rotated) {
+		    for (int[] k : KICKS) {
+		        if (canMove(GameBoard.getBoard(), rotated, k[0], k[1])) {
+		            this.setBlockShape(rotated);
+		            this.setBlockX(this.blockX + k[0] * CELL);
+		            this.setBlockY(this.blockY + k[1] * CELL);
+		            return;
+		        }
+		    }
+		}
 	
 }
 
@@ -288,14 +329,15 @@ class BlockMap {
 	public final Image brownLine =
 	        new ImageIcon(getClass().getResource("/images/brownLine.png")).getImage();
 
-	final public Map<BlockType, Image> TypeImageMap = new HashMap<BlockType, Image>();
-	final public Map<BlockType, Image> TypeLineMap = new HashMap<BlockType, Image>();
+	final private Map<BlockType, Image> TypeImageMap = new HashMap<BlockType, Image>();
+	final private Map<BlockType, Image> TypeLineMap = new HashMap<BlockType, Image>();
 	
 	public BlockMap() {
 		initTypeImageMap();
 		initTypeLineMap();
 	}
 	
+	// BlockType에 맞는 BlockImage(or BlockLine).png를 반환한다.
 	public Image getBlockImage(Block block) {
 		return TypeImageMap.get(block.getBlockType());
 	}
@@ -304,6 +346,7 @@ class BlockMap {
 		return TypeLineMap.get(block.getBlockType());
 	}
 	
+	// Map 초기화
 	private void initTypeImageMap() {
     	this.TypeImageMap.put(BlockType.I, cyanBlock);
     	this.TypeImageMap.put(BlockType.O, yellowBlock);
