@@ -1,29 +1,51 @@
 # Capstone_Tetris
-Implement Tetris with Java
 
-### 참고 자료
-- 배치 레이아웃<br>
-**·** https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=battledocho&logNo=220006951261<br>
+## 목차
+- [1. 프로젝트 소개](#1-프로젝트-소개)
+- [2. 주요 기능](#2-주요-기능)
+- [3. 사용 기술](#3-사용-기술)
+- [4. 설치 및 실행 방법](#4-설치-및-실행-방법)
+- [5. 조작법](#5-조작법)
 
-- cmd에서 sql 커넥터 포함하여 실행하는 명령<br>
-**·** https://m.blog.naver.com/gjfvngjfvn/221083833391<br>
-**·** https://dev-nicitis.tistory.com/8<br>
+### 1. 프로젝트 소개
 
-- SQL SELECT 정렬<br>
-**·** https://extbrain.tistory.com/51<br>
 
-- private 생성자<br>
-**·** https://velog.io/@john7645/private-%EC%83%9D%EC%84%B1%EC%9E%90%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%AC%EC%9A%A9%EB%90%A0%EA%B9%8C-%EC%8B%B1%EA%B8%80%ED%86%A4%ED%8C%A8%ED%84%B4<br>
-**·** https://sedangdang.tistory.com/220<br>
 
-- 이미지 삽입<br>
-**·** https://intunknown.tistory.com/entry/%EC%9E%90%EB%B0%94-%ED%94%84%EB%A0%88%EC%9E%84%EC%97%90-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EB%84%A3%EA%B8%B0java-swing<br>
-**·** https://m.blog.naver.com/rain483/220736840879<br>
-**·** https://hwantech.tistory.com/64<br>
-**·** https://blog.naver.com/javaking75/140173265821<br>
+### 2. 주요 기능
 
-- javax.swing.Timer<br>
-**·** https://sjh836.tistory.com/36<br>
 
-- 테트리스 기본 키<br>
-**·** https://arca.live/b/tetris/58107918<br>
+
+### 3. 사용 기술
+
+---
+
+### 4. 설치 및 실행 방법
+
+본문에서 설명하는 설치 및 실행 방법은 다음과 같은 사용자 환경을 요구합니다.<br>
+
+**·** Java가 설치된 환경<br>
+**·** MySQL이 설치된 환경<br>
+
+---
+<br>
+
+1\. `TetrisClient/src` 폴더와 `TetrisServer` 폴더를 각각 다운로드합니다. 
+
+\- git이 설치된 환경에서는 다음 명령어를 이용하여 다운로드 할 수 있습니다.<br>
+
+```bash
+git clone --depth 1 https://github.com/CodingDooPal/Capstone_Tetris.git
+```
+
+\- 만약 git이 설치된 환경이 아니거나 그냥 명령어를 치기가 귀찮다면 아래 사이트에 들어가면 바로 다운로드가 됩니다. 만약 안 된다면 직접 다운로드 버튼을 누르세요.<br>
+
+**·** [Down Git 이동](https://downgit.github.io/#/home?url=https:%2F%2Fgithub.com%2FCodingDooPal%2FCapstone_Tetris%2Ftree%2Fmain)<br>
+
+2\. 
+
+
+
+
+
+
+### 5. 조작법
