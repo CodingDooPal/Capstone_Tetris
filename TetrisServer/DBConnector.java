@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class DBConnector {   
     private static final String USER = "root";
-    private static final String PW = "dytc1234";
+    private static final String PW = "";
     public static final String DB_NAME = "tetris_database";
     public static final String TABLE_NAME = "user_info";
 
